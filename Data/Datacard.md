@@ -1,95 +1,75 @@
 ### Dataset Description
-### Homepage:
-Repository: https://github.com/PresidioEcoHort/Bee-study/new/main
-Paper: If the dataset was introduced by a paper or there was a paper written describing the dataset, add URL here (landing page for Arxiv paper preferred)
-Leaderboard: If the dataset supports an active leaderboard, add link here
-##Point of Contact: Diony Gamoso, dgamoso@presidiotrust.gov; dionisiogamoso@gmail.com
-###Dataset Summary
-##Briefly summarize the dataset, its intended use and the supported tasks. Give an overview of how and why the dataset was created. The summary should explicitly mention the languages present in the dataset (possibly in broad terms, e.g. translations between several pairs of European languages), and describe the domain, topic, or genre covered.
-This dataset has pollinator observation and specimen data and the flower genera of species they were observed visiting.  It also has flower abundance estimates and environmental conditions during sampling sessions.
-The purpose is to determine the effect of augmenting landscaped planter beds with native plants.  Also, I am interested in which plant species have the most habitat value to pollinators.
-###Supported Tasks and Leaderboards
-For each of the tasks tagged for this dataset, give a brief description of the tag, metrics, and suggested models (with a link to their HuggingFace implementation if available). Give a similar description of tasks that were not covered by the structured tag set (repace the task-category-tag with an appropriate other:other-task-name).
 
-task-category-tag: The dataset can be used to train a model for [TASK NAME], which consists in [TASK DESCRIPTION]. Success on this task is typically measured by achieving a high/low metric name. The (model name or model class) model currently achieves the following score. [IF A LEADERBOARD IS AVAILABLE]: This task has an active leaderboard which can be found at leaderboard url and ranks models based on metric name while also reporting other metric name.
-##Languages
+
+## Point of Contact: 
+Diony Gamoso, dgamoso@presidiotrust.gov; dionisiogamoso@gmail.com
+## Dataset Summary
+This dataset has pollinator observation and specimen data and the flower genera of species they were observed visiting.  It also has flower abundance estimates and environmental conditions during sampling sessions.
+The purpose is to determine the effect on pollinator abundance, diversity, and richness of augmenting landscaped planter beds with native plants. In addition, I am curious if adding host plants for specialist bees attracts them to the planters.   Also, I am interested in which plant species have the most habitat value to pollinators.
+
+## Languages
 English
 
+## Dataset Structure
+# Column headings for EcohortFieldMethodsData2023ForAnalysis Excel file
+DateBlkTrtmnt	Date	Block	Treatment	CountType	Insect type	InsectGenus	InsectSpecies	Idnotes	Sex	Count	PlantGenus	PlantSpecies	Poll_nectar	Idnumber	captured?	Notes		
 
-
-Dataset Structure
-Data Instances
-Provide an JSON-formatted example and brief description of a typical instance in the dataset. If available, provide a link to further examples.
-Example for pollinator-flower data:  DateBlockTreatment code (an individual sampling event i.d.), Date, Treatment (Host plant plot (H), Non-Host plant plot (NH), Control plot (C), Insect type, Insect genus, species, count, flower type visiting, notes
+DateBlkTrtmnt: combines date, block, treatment to individually identify a sampling event
+Date: date in this format: ex "29Apr2024"
+Block:  identify the 12 blocks (each with three treatment plots) with four letter code.  For example "For Scott Community Garden" code is FSCG
+Treatment: H = Host plant plots, NH = native non-host plant plots, C = Control
+Insect type:  examples include bee, hoverfly, wasp, unknown
+InsectGenus: genus of insect.  Example :  Bombus for bumblebees
+InsectSpecies: the species of the insect.  For example "melanopygus" for Bombus melanopygus
+IDnotes:
+Sex: sex of insect if determinable
+PlantGenus: genus of plant visited by the pollinator in that data row
+PlantSpecies: species of plant visited by pollinator in that data row
+Poll_nectar:  if determinable, was it gathering pollen or nectar
+Idnumber:  identifies the individual specimen (either collected, or photographed)		Combines the DateBlkTrtmnt with s1, s2, s3 for specimen #,  or p1, p2, p3... for photographed then released insects.
+captured? was the insect actually netted? or missed?
+Notes:  general notes 				
+Example below:
 24Apr2023stavnh	24-Apr-23	stav	NH	N2	Bee	Bombus	vosnesenskii			1	Fuschia			202300004		did not see pollen on legs						
 
-Example of flower data:  Date, block, treatment, 
-16Oct2023	shta	h	16Oct2023shtah		1102	LG	0.9	19.3	62	15	95	Grindelia	hirsitula	10	16	native					
+#Column headings for EcohortFlowerData Excel file					
+Date	Block	Trtmnt	DateBlkTrtCode	Loc	Time	Netter	AvegWindMph	TempC	Humidity	CloudCover	PercentInSun	Genus	Species	TotalOpenFl	TotalCloseFl	NatorNon	Notes				
 
-Provide any additional information that is not covered in the other sections about the data here. In particular describe any relationships between data points and if these relationships are made explicit.
+Date: date in this format: ex "29Apr2024"
+Block:  identify the 12 blocks (each with three treatment plots) with four letter code.  For example "For Scott Community Garden" code is FSCG
+Treatment: H = Host plant plots, NH = native non-host plant plots, C = Control
+Loc: location of sampling site; this can be an address, an intersection, or a descriptive name.  Not used in analysis
+Time:  start time of sampling event in military time
+Netter:  the initials of the person netting the pollinators
+AvegWindMph:  average wind speed measured with a Kestrel
+TempC:  temperature in degrees Celsius measured with Kestrel
+Humidity: percent humidity measured with Kestrel
+CloudCover: percent of sky covered by clouds
+PercentInSun: percent of the actual 4-meter-square sampling quadrat in full sun (how much is not shaded)
+If overcast, but there are no objects (trees or buildings) obstructing the light of the sun on the quadrat's surface area, that would be recorded as 100% PercentInSun
+Genus: plant genus
+Species: plant species
+TotalOpenFl: # of total open flowers for an individual plant species within 4m square quadrat
+TotalCloseFl: # of total closed flowers (buds that show the petal color, but the reproductive parts are still covered by the petals and are inaccessible to pollinators) for an individual plant species within the 4m square quadrat
+NatorNon: native, ornamental, weedy to descripe plant type
+Notes: general notes
 
-Data Fields
-List and describe the fields present in the dataset. Mention their data type, and whether they are used as input or output in any of the tasks the dataset currently supports. If the data has span indices, describe their attributes, such as whether they are at the character level or word level, whether they are contiguous or not, etc. If the datasets contains example IDs, state whether they have an inherent meaning, such as a mapping to other datasets or pointing to relationships between data points.
+Example data
+21Aug2023	mpsu	h	21Aug2023mpsuh	Powderhouse	935	DG	2	18.4	96	98	100	Grindelia	stricta	3	2	native					
 
-example_field: description of example_field
-Note that the descriptions can be initialized with the Show Markdown Data Fields output of the Datasets Tagging app, you will then only need to refine the generated descriptions.
+# Note
+One of the main goals of the research is to gather data on pollinator use of particular plants.  Hence, each row links the pollinator to the plant it was using.  Also, flower abundance and its effect on pollinator abundance, diversity , and richness are of interest, and therefore the two spreadsheets "EcoHortFlowerData" and "EcohortFieldMethodsData2023ForAnalysis" are linked through the DateBlkTrtmnt column.
 
-Data Splits
-Describe and name the splits in the dataset if there are more than one.
+## Source Data
+Data was all collected in the field, at the Presidio, San Francisco.
 
-Describe any criteria for splitting the data, if used. If there are differences between the splits (e.g. if the training annotations are machine-generated and the dev and test ones are created by humans, or if different numbers of annotators contributed to each example), describe them here.
-
-Provide the sizes of each split. As appropriate, provide any descriptive statistics for the features, such as average length. For example:
-
-train	validation	test
-Input Sentences			
-Average Sentence Length			
-Dataset Creation
-Curation Rationale
-What need motivated the creation of this dataset? What are some of the reasons underlying the major choices involved in putting it together?
-
-Source Data
-This section describes the source data (e.g. news text and headlines, social media posts, translated sentences,...)
-
-Initial Data Collection and Normalization
+## Initial Data Collection and Normalization
 Describe the data collection process. Describe any criteria for data selection or filtering. List any key words or search terms used. If possible, include runtime information for the collection process.
+Data were collected in the field, in the Presidio, San Francisco, CA   USA.  
+Bee sampling was typically conducted between 0930 - 1730, and in temperatures above 11 degrees Celsius, and average wind below 7 miles per hour.
+All plant genera or species (when possible to identify) that were in flower were recorded within the 4-meter-square quadrat, and their open and closed flowers were counted individually, or estimated (e.g. counting number of flowers on 3 inflorescences, average that number, and multiplying by the number of infloresces of that plant)  Then we would perform a 1-minute "snapshot" count of pollinators and which plants they were using. AFter that, we would do netting of pollinators "N1" for five minutes, and then a second netting session "N2" .  We would stop the timer each time a pollinator was captured and processed.  Smaller bees were euthanized in soapy vials and collected.  Larger bees such as bumble bees were chilled in a cooler, photographed, and released.
 
-If data was collected from other pre-existing datasets, link to source here and to their Hugging Face version.
 
-If the data was modified or normalized after being collected (e.g. if the data is word-tokenized), describe the process and the tools used.
-
-Who are the source language producers?
-State whether the data was produced by humans or machine generated. Describe the people or systems who originally created the data.
-
-If available, include self-reported demographic or identity information for the source data creators, but avoid inferring this information. Instead state that this information is unknown. See Larson 2017 for using identity categories as a variables, particularly gender.
-
-Describe the conditions under which the data was created (for example, if the producers were crowdworkers, state what platform was used, or if the data was found, what website the data was found on). If compensation was provided, include that information here.
-
-Describe other people represented or mentioned in the data. Where possible, link to references for the information.
-
-Annotations
-If the dataset contains annotations which are not part of the initial data collection, describe them in the following paragraphs.
-
-Annotation process
-If applicable, describe the annotation process and any tools used, or state otherwise. Describe the amount of data annotated, if not all. Describe or reference annotation guidelines provided to the annotators. If available, provide interannotator statistics. Describe any annotation validation processes.
-
-Who are the annotators?
-If annotations were collected for the source data (such as class labels or syntactic parses), state whether the annotations were produced by humans or machine generated.
-
-Describe the people or systems who originally created the annotations and their selection criteria if applicable.
-
-If available, include self-reported demographic or identity information for the annotators, but avoid inferring this information. Instead state that this information is unknown. See Larson 2017 for using identity categories as a variables, particularly gender.
-
-Describe the conditions under which the data was annotated (for example, if the annotators were crowdworkers, state what platform was used, or if the data was found, what website the data was found on). If compensation was provided, include that information here.
-
-Personal and Sensitive Information
-State whether the dataset uses identity categories and, if so, how the information is used. Describe where this information comes from (i.e. self-reporting, collecting from profiles, inferring, etc.). See Larson 2017 for using identity categories as a variables, particularly gender. State whether the data is linked to individuals and whether those individuals can be identified in the dataset, either directly or indirectly (i.e., in combination with other data).
-
-State whether the dataset contains other data that might be considered sensitive (e.g., data that reveals racial or ethnic origins, sexual orientations, religious beliefs, political opinions or union memberships, or locations; financial or health data; biometric or genetic data; forms of government identification, such as social security numbers; criminal history).
-
-If efforts were made to anonymize the data, describe the anonymization process.
-
-Considerations for Using the Data
 Social Impact of Dataset
 Please discuss some of the ways you believe the use of this dataset will impact society.
 
