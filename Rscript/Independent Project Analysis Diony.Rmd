@@ -1,0 +1,99 @@
+---
+title: "Independent Project Diony Analysis "
+author: "Diony Gamoso"
+date: "r Sys.Date()"
+output:
+  pdf_document: default
+  html_document: default
+---
+## First will load packages
+```{r load-packages, message=FALSE}
+library(tidyverse)
+library(openintro)
+library(ggplot2)
+library(dplyr)
+```
+### Introduction
+ Eighty-seven percent of the world’s flowering plants reproduce through the aid of pollinators, and the most important pollinators are bees (Ollerton et al., 2011).  However, many bee species are in decline around the world due to disease, habitat destruction, pesticides, exotic species, urbanization, and other stressors  (Biesmeijer et al., 2006; Burkle et al., n.d.; Leather, 2018; LeBuhn & Vargas Luna, 2021; Mathiasson & Rehan, 2020).  To counter this decline, many organizations are increasing efforts to preserve and create habitat for wild bees in urban areas. Urban areas can serve as a refuge for wild bees (Frankie et al., 2019; Frankie et al., n.d.; Mach & Potter, 2018; Matteson & Langellotto, 2011; Tonietto et al., 2011). Urban food gardens, residential landscaping, city parks, weedy lots, pollinator gardens, and “ecosystem-oriented” urban landscapes are host to a diverse array of native bees  (G. W. Frankie et al., n.d.; Pawelek et al., 2009; Tommasi & Entomologist, n.d.; Wojcik et al., 2008).  In urban ecosystems, wild bees pollinate plants, which, in turn, provides food and shelter for other wildlife, and humans (Burghardt et al., 2009; Hausmann et al., 2016; Lowenstein et al., 2015; Narango et al., 2020; Potter & LeBuhn, 2015). Interested individuals, grassroots organizations, city and county parks, and even entire cities are starting to realize the importance of urban habitats for pollinators, and efforts are under way to provide patches of habitat within the urban jungle (Home - Million Pollinator Garden Challenge, n.d.; National Wildlife Federation, n.d.; The Xerces Society for Invertebrate Conservation, n.d.).   
+
+  Bees can prefer native plants (Morandin & Kremen, 2013; Pardee & Philpott, 2014), but also use ornamental, or non-native plants (Belle, n.d.; G. Frankie et al., 2019; G. W. Frankie et al., 2005; Mach & Potter, 2018; Matteson & Langellotto, 2011; Pawelek et al., 2009)  
+Few studies have looked at the effectiveness of relatively small-scale, native plant additions in urban environments.  
+
+  The Presidio, an urban national park within the city of San Francisco, CA U.S.A. , recently began an initiative to practice ecological horticulture (“EcoHort”) in the formal, designed landscape  (Michael Boland, Chief Park Officer, pers. comm).    EcoHort aims to convert decorative planters and lawns, as well as under-utilized, weedy plots within the designed landscape, into ecologically richer habitats which are both aesthetically pleasing and ecologically valuable.     Large-scale changes are just on the horizon, and hence, a giant experiment is about to unfold. Let us capitalize on this opportunity to study the effects of current, small-scale management actions, fine-tune them for greater effectiveness, use that to inform future planning and management on a larger scale, and share what is learned with others.   
+
+ Given that the eventual goal of the Presidio Ecological Horticulture project is to develop a more ecologically rich environment within the designed landscape, inhabited by a diverse array of native pollinators, in this study, I will ask:
+1.	Does supplementing existing planter beds with native wildflowers increase pollinator/bee  abundance?
+
+
+Hypotheses:
+1. Null: Planter beds augmented with native wildflowers will not have greater pollinator abundance nor richness.
+1' Alternative:  Planter beds augmented with native wildflowers will  have greater pollinator abundance or richness.
+
+### Methods for statistical analysis
+I used the tidyverse package as well as ggplot2.
+To prepare the raw data for analysis, I first grouped the Host plant treatment and Non-host plant treatment into one category "Augmented" - meaning both of these treatments were augmented with native wildflowers.  Control plots, which did not get augmented were classified as "Unaugmented".  My analysis is focused on comparing pollinator abundance in "Augmented" versus "Unaugmented" plots.
+I then selected the relevant variables using "group_by" to create a simplied dataframe.  From there, I used the "summarise" function to get the sums of pollinator Counts for each individual sampling event which is identified by the Date-Block-Treatment code "DateBlkTrtmnt".  Using this new dataframe with summed counts, I then plotted the data using ggplot2 to create boxplots.
+
+After, I ran an ANOVA to test for significance between the pollinator abundance per individual sampling event in Augmented versus Unaugmented plots. I used an ANOVA to compare the two means, rather than a t-test, because I used a blocked design, and the ANOVA would allow me to factor in the Block as a random effect.
+
+```{r code-chunk-label}
+
+```
+
+### Now will read in data files
+```{r}
+# Read in the bee observation data
+Bees2023 <- read.csv("C:/Users/dgamoso/OneDrive - The Presidio Trust/Diony's Stuff/Graduate school/Presidio Ecological Horticulture Project/Bee-study/Data/EcohortFieldMethodsData2023ForAnalysis.csv")
+# Next, create a new data frame where both Host and Non-host treatments are clumped under "Augmented" (with native flowers), and Control plots are called "Unaugmented)
+Bees2023Augmented <- Bees2023 %>% dplyr::mutate(Augmentation = case_when(Treatment == "C" ~ "NoExtraFlowers", Treatment == "NH" ~ "NativeFlowersAdded", Treatment == "H" ~ "NativeFlowersAdded" ))
+
+#Need help getting rid of NA's
+```
+
+
+...
+# Now, want to group the data by DateBlkTrmnt, and sum the insect counts per each DBT :
+```{r}
+# let me just group by DateBlkTrtmnt these 4 categories
+DBT_groups<-group_by(Bees2023Augmented,DateBlkTrtmnt, Augmentation, Block)
+
+
+# Next, I want to get a total count of observed or netted bees per group, our groups being DateBlkTrtmnts.  I will create a new column called SumsOfCount
+Sums_counts_DBT <-summarize(DBT_groups, SumsOfCounts = sum (Count))
+#getting rid of the NA
+rowsnotNA <- which(!is.na(Sums_counts_DBT$Augmentation))
+Sums_counts_DBT<-Sums_counts_DBT[rowsnotNA,]
+
+#What is the mean of each treatment?
+means_AugVsUnaug <-aggregate(SumsOfCounts~Augmentation, Sums_counts_DBT, mean)
+means_AugVsUnaug
+```
+### Visualizing the data with a boxplot
+```{r}
+
+plot_means_all_pollinators<- ggplot(data = Sums_counts_DBT, aes (x = Augmentation, y = SumsOfCounts, fill = Augmentation)) + 
+  geom_boxplot()+
+  xlab("Added Native Wildflowers?")+
+  ylab("Mean/Median Pollinator counts")+
+  ggtitle("Does adding wildflowers make a difference?")+
+  stat_summary(fun.y="mean",color="red", shape=13)
+plot_means_all_pollinators
+#If I want to look at all blocks...
+plot_means_all_pollinators+facet_wrap(~Block)
+```
+### Now want to run an ANOVA, but only comparing two groups (ANOVA rather than t-test because ANOVA allows me to factor in the Block)
+```{r}
+# ANOVA
+anova_augmentation <- aov(SumsOfCounts ~ Augmentation + Block, data= Sums_counts_DBT)
+summary(anova_augmentation)
+```
+```{r}
+ 
+```
+
+### Results
+The results of the ANOVA show highly significant effect of "Augmentation" (adding native wildflowers to a planter).  The p-value was 0.0000000716, which is highly significant, and therefore we can reject the null hypothesis.
+
+### Discussion
+This experiment is being performed to test the effectiveness of augmenting ornamental planter beds with native plants.  The Presidio Trust is interested in this question because they are embarking on a new land management initiative, "Ecological Horticulture" to transform the formal, designed landscape into "eco-scapes" using native plants both for their aesthetic value as well as their ecological value. This highly significant result from the data showing that adding native plants to planter beds increases (doubles) pollinator abundance helps confirm that these Ecological Horticulture practices are fulfilling their desired, ecological goals.
+However, do note that the design of the experiment does not tease out the effect of adding native wildflowers, from the effect of just adding more flowers in general (regardless of nativity or not).  We did not augment planter beds with more non-native, ornamental flowers which would have helped tease out the importance of nativity.  More research on that would be desirable in the future.

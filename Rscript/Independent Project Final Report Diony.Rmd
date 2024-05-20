@@ -1,5 +1,5 @@
 ---
-title: "Independent Project Diony Analysis "
+title: "Independent Project Diony Final Report "
 author: "Diony Gamoso"
 date: "r Sys.Date()"
 output:
@@ -26,8 +26,8 @@ Few studies have looked at the effectiveness of relatively small-scale, native p
 
 
 Hypotheses:
-1. Null: Planter beds augmented with native wildflowers will not have greater pollinator abundance nor richness.
-1' Alternative:  Planter beds augmented with native wildflowers will  have greater pollinator abundance or richness.
+1. Null: Planter beds augmented with native wildflowers will not have greater pollinator abundance.
+1' Alternative:  Planter beds augmented with native wildflowers will have greater pollinator abundance.
 
 ### Methods for statistical analysis
 I used the tidyverse package as well as ggplot2.
@@ -43,11 +43,10 @@ After, I ran an ANOVA to test for significance between the pollinator abundance 
 ### Now will read in data files
 ```{r}
 # Read in the bee observation data
-Bees2023 <- read.csv("C:/Users/dgamoso/OneDrive - The Presidio Trust/Diony's Stuff/Graduate school/Presidio Ecological Horticulture Project/Data/EcohortFieldMethodsData2023ForAnalysis.csv")
+Bees2023 <- read.csv("C:/Users/dgamoso/OneDrive - The Presidio Trust/Diony's Stuff/Graduate school/Presidio Ecological Horticulture Project/Bee-study/Data/EcohortFieldMethodsData2023ForAnalysis.csv")
 # Next, create a new data frame where both Host and Non-host treatments are clumped under "Augmented" (with native flowers), and Control plots are called "Unaugmented)
-Bees2023Augmented <- Bees2023 %>% dplyr::mutate(Augmentation = case_when(Treatment == "C" ~ "Unaugmented", Treatment == "NH" ~ "Augmented", Treatment == "H" ~ "Augmented" ))
-#Bees2023Augmented <- drop_na("Count")
-#Need help getting rid of NA's
+Bees2023Augmented <- Bees2023 %>% dplyr::mutate(Augmentation = case_when(Treatment == "C" ~ "NoExtraFlowers", Treatment == "NH" ~ "NativeFlowersAdded", Treatment == "H" ~ "NativeFlowersAdded" ))
+
 ```
 
 
@@ -60,18 +59,30 @@ DBT_groups<-group_by(Bees2023Augmented,DateBlkTrtmnt, Augmentation, Block)
 
 # Next, I want to get a total count of observed or netted bees per group, our groups being DateBlkTrtmnts.  I will create a new column called SumsOfCount
 Sums_counts_DBT <-summarize(DBT_groups, SumsOfCounts = sum (Count))
+#getting rid of the NA
+rowsnotNA <- which(!is.na(Sums_counts_DBT$Augmentation))
+Sums_counts_DBT<-Sums_counts_DBT[rowsnotNA,]
 
+#What is the mean of each treatment?
+means_AugVsUnaug <-aggregate(SumsOfCounts~Augmentation, Sums_counts_DBT, mean)
+means_AugVsUnaug
 ```
 ### Visualizing the data with a boxplot
 ```{r}
 
 plot_means_all_pollinators<- ggplot(data = Sums_counts_DBT, aes (x = Augmentation, y = SumsOfCounts, fill = Augmentation)) + 
   geom_boxplot()+
-  xlab("Augmented with Wildflowers?")+
-  ylab("Pollinator counts per treatment")+
-  ggtitle("Does adding wildflowers make a difference?")+
+  labs(x = "Added Native Wildflowers?", y="Mean/Median Pollinatorcounts", title = "Does adding wildflowers make a difference?", caption =  "Shows median and mean of pollinator counts per sampling event. We compare  Augmented (plots with native wildflowers added), and Unaugmented (control) plots")+
   stat_summary(fun.y="mean",color="red", shape=13)
 plot_means_all_pollinators
+#If I want to look at all blocks...
+plots_all_blocks<-ggplot(data = Sums_counts_DBT, aes (x = Augmentation, y = SumsOfCounts, fill = Augmentation)) + 
+  geom_boxplot()+
+  labs(x = "Added Native Wildflowers?", y="Mean/Median Pollinatorcounts", title = "Does adding wildflowers make a difference, by Block?", caption =  "Shows median and mean of pollinator counts per sampling event. We compare  Augmented (plots with native wildflowers added), and Unaugmented (control) plots")+
+  stat_summary(fun.y="mean",color="red", shape=13)+
+facet_wrap(~Block)
+plots_all_blocks
+
 ```
 ### Now want to run an ANOVA, but only comparing two groups (ANOVA rather than t-test because ANOVA allows me to factor in the Block)
 ```{r}
@@ -85,7 +96,10 @@ summary(anova_augmentation)
 
 ### Results
 The results of the ANOVA show highly significant effect of "Augmentation" (adding native wildflowers to a planter).  The p-value was 0.0000000716, which is highly significant, and therefore we can reject the null hypothesis.
+In addition, the effect of block was also significant with a p-value of 0.000352.
 
 ### Discussion
-This experiment is being performed to test the effectiveness of augmenting ornamental planter beds with native plants.  The Presidio Trust is interested in this question because they are embarking on a new land management initiative, "Ecological Horticulture" to transform the formal, designed landscape into "eco-scapes" using native plants both for their aesthetic value as well as their ecological value. This highly significant result from the data showing that adding native plants to planter beds increases (doubles) pollinator abundance helps confirm that these Ecological Horticulture practices are fulfilling their desired, ecological goals.
-However, do note that the design of the experiment does not tease out the effect of adding native wildflowers, from the effect of just adding more flowers in general (regardless of nativity or not).  We did not augment planter beds with more non-native, ornamental flowers which would have helped tease out the importance of nativity.  More research on that would be desirable in the future.
+  This experiment is being performed to test the effectiveness of augmenting ornamental planter beds with native plants.  The Presidio Trust is interested in this question because they are embarking on a new land management initiative, "Ecological Horticulture" to transform the formal, designed landscape into "eco-scapes" using native plants both for their aesthetic value as well as their ecological value. This highly significant result from the data showing that adding native plants to planter beds increases pollinator abundance helps confirm that these Ecological Horticulture practices are fulfilling their desired, ecological goals.
+   However, do note that the design of the experiment does not tease out the effect of adding native wildflowers, from the effect of just adding more flowers in general (regardless of nativity or not).  We did not augment planter beds with more non-native, ornamental flowers which would have helped tease out the importance of nativity.  More research on that would be desirable in the future.
+   I am glad that I ended up choosing to do a block design.  It's very much like creating a "food court" with the 3 "restaurant" choices offered up to pollinators within each block.  Looking at all of the blocks, the Augmented "restaurant" gets more "customers", although the degree to which the Augmented plot gets more pollinators varies by block. The blocks where Augmented and Unaugmented blocks did not differ very much in mean number of pollinators visiting were typically those blocks in which the native plantings had not grown very much, and had very small blooms.  
+   These preliminary results bode well for future pollinator abundance as these planter beds develop over time.  The current data was taken from plots whose native plants were essentially "infantile" - being small in size and having relatively few blooms.  As these plantings get more robust, I am expecting more flowers, and likely an even bigger effect on pollinator abundance.

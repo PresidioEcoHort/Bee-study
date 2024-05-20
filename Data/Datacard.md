@@ -30,11 +30,24 @@ Idnumber:  identifies the individual specimen (either collected, or photographed
 captured? was the insect actually netted? or missed?
 Notes:  general notes 				
 # Example below:
-24Apr2023stavnh	24-Apr-23	stav	NH	N2	Bee	Bombus	vosnesenskii			1	Fuschia			202300004		did not see pollen on legs						
+DateBlkTrtmnt: "29Apr2024FOSCH"
+Date: "29Apr2024"
+Block:  "FSCG"
+Treatment: "H", "NH", "C"
+Insect type:  "bee"
+InsectGenus: "Bombus"
+InsectSpecies: the species of the insect.  "melanopygus"
+IDnotes: "yellow striping on abdomen"
+Sex: "m"
+PlantGenus: "Ranunculus"
+PlantSpecies: "californicus"
+Poll_nectar:  "nectar"
+Idnumber:  "p1", "s1"
+Notes:  "buzzing close to ground"		
+					
 
 #Column headings for EcohortFlowerData Excel file					
-Date	Block	Trtmnt	DateBlkTrtCode	Loc	Time	Netter	AvegWindMph	TempC	Humidity	CloudCover	PercentInSun	Genus	Species	TotalOpenFl	TotalCloseFl	NatorNon	Notes				
-
+			
 Date: date in this format: ex "29Apr2024"
 Block:  identify the 12 blocks (each with three treatment plots) with four letter code.  For example "For Scott Community Garden" code is FSCG
 Treatment: H = Host plant plots, NH = native non-host plant plots, C = Control
@@ -54,8 +67,24 @@ TotalCloseFl: # of total closed flowers (buds that show the petal color, but the
 NatorNon: native, ornamental, weedy to descripe plant type
 Notes: general notes
 
-# Example data
-21Aug2023	mpsu	h	21Aug2023mpsuh	Powderhouse	935	DG	2	18.4	96	98	100	Grindelia	stricta	3	2	native					
+# Example data"
+Date:  "29Apr2024FSCGH"
+Block:   "FSCG"
+Treatment: "H" , "NH", "C"
+Loc: "north planter"
+Time:  "1536"
+Netter:  "DG"
+AvegWindMph:  "1.4mph" 
+TempC:  "17.2"
+Humidity: "87"
+CloudCover: "72"
+PercentInSun: "100"
+Genus: "Ranunculus"
+Species: p"californicus"
+TotalOpenFl: "72"
+TotalCloseFl: "15"
+NatorNon: "ornamental"
+Notes: general notes					
 
 # Note
 One of the main goals of the research is to gather data on pollinator use of particular plants.  Hence, each row links the pollinator to the plant it was using.  Also, flower abundance and its effect on pollinator abundance, diversity , and richness are of interest, and therefore the two spreadsheets "EcoHortFlowerData" and "EcohortFieldMethodsData2023ForAnalysis" are linked through the DateBlkTrtmnt column.
